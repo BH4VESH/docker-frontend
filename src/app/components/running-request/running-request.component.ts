@@ -64,10 +64,10 @@ export class RunningRequestComponent implements OnInit {
 
 
   getUserPic(iconName: string): string {
-    return `http://localhost:3000/uploads/userProfilePic/${iconName}`;
+    return `${environment.apiUrl}/uploads/userProfilePic/${iconName}`;
   }
   getServiceIcon(iconName: string): string {
-    return `http://localhost:3000/uploads/icons/${iconName}`;
+    return `${environment.apiUrl}/uploads/icons/${iconName}`;
   }
   getSettingTime(){
     this.Setting.getSetting().subscribe((settingTime)=>{

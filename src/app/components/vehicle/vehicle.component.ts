@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { VehicleService } from '../../services/vehicle.service';
 import { VehicleType } from '../../models/vihicle-type'
 import { firstCharIsLetter } from '../../validator/first_cherecter';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-vehicle',
@@ -85,7 +86,7 @@ export class VehicleComponent implements OnInit {
     this.icon = event.target.files[0];
   }
   getIconUrl(iconName: string): string {
-    return `http://localhost:3000/uploads/icons/${iconName}`;
+    return `${environment.apiUrl}/uploads/icons/${iconName}`;
   }
   editVehicle(vehicle: any): void {
     this.btn_name = "Update";

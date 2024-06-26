@@ -7,6 +7,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { VehicleService } from '../../services/vehicle.service';
 import { SocketService } from '../../services/socket.service';
 import { DurationConvertPipe } from "../../pipes/duration-convert.pipe";
+import { environment } from '../../../environments/environment.development';
 
 
 
@@ -147,13 +148,13 @@ export class ConfirmedRidesComponent implements OnInit {
     console.log(this.infoData);
   }
   getUserPic(iconName: string): string {
-    return `http://localhost:3000/uploads/userProfilePic/${iconName}`;
+    return `${environment.apiUrl}/uploads/userProfilePic/${iconName}`;
   }
   getServiceIcon(iconName: string): string {
-    return `http://localhost:3000/uploads/icons/${iconName}`;
+    return `${environment.apiUrl}/uploads/icons/${iconName}`;
   }
   getDriverPic(iconName: string): string {
-    return `http://localhost:3000/uploads/driver_list_profile/${iconName}`;
+    return `${environment.apiUrl}/uploads/driver_list_profile/${iconName}`;
   }
 
 

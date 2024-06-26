@@ -184,17 +184,22 @@ export class CreateRideComponent implements OnInit, AfterViewInit {
 
   // for the map
   initMap(): void {
-    navigator.geolocation.getCurrentPosition((location) => {
-      let coordinates = location.coords;
-      const myplace = { lat: coordinates.latitude, lng: coordinates.longitude };
-      this.map = new google.maps.Map(
-        this.mapContainer.nativeElement,
-        {
-          zoom: 10,
-          center: myplace,
-        }
-      );
-    });
+    // navigator.geolocation.getCurrentPosition((location) => {
+    //   let coordinates = location.coords;
+      // const myplace = { lat: coordinates.latitude, lng: coordinates.longitude };
+    //   this.map = new google.maps.Map(
+    //     this.mapContainer.nativeElement,
+    //     {
+    //       zoom: 10,
+    //       center: myplace,
+    //     }
+    //   );
+    // });
+    const mapOptions: google.maps.MapOptions = {
+      center: { lat: 22.2598107, lng: 70.7287299 },
+      zoom: 10
+    };
+    this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
   }
 
   // autoComplete for every field

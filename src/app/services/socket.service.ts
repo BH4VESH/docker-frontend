@@ -10,7 +10,7 @@ export class SocketService {
   public socket: Socket;
   constructor() {
     // soket conection
-    this.socket = io(environment.apiUrl);
+    this.socket = io(environment.socketUrl);
      // this.socket = io('ws://localhost:3000');
      this.socket.on('connect', () => {
       console.log('7777777777777777777777777777Connected to server77777777777777777.');

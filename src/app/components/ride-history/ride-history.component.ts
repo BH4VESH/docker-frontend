@@ -12,6 +12,7 @@ import { rideDetails} from '../../models/rideHistory';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { environment } from '../../../environments/environment.development';
 
 declare const google: any;
 
@@ -154,13 +155,13 @@ export class RideHistoryComponent implements OnInit {
   }
 
   getUserPic(iconName: string): string {
-    return `http://localhost:3000/uploads/userProfilePic/${iconName}`;
+    return `${environment.apiUrl}/uploads/userProfilePic/${iconName}`;
   }
   getServiceIcon(iconName: string): string {
-    return `http://localhost:3000/uploads/icons/${iconName}`;
+    return `${environment.apiUrl}/uploads/icons/${iconName}`;
   }
   getDriverPic(iconName: string): string {
-    return `http://localhost:3000/uploads/driver_list_profile/${iconName}`;
+    return `${environment.apiUrl}/uploads/driver_list_profile/${iconName}`;
   }
 
   // socket live listening
@@ -198,15 +199,21 @@ export class RideHistoryComponent implements OnInit {
 
   initMap(): void {
     navigator.geolocation.getCurrentPosition((location) => {
-      let coordinates = location.coords;
-      const myplace = { lat: coordinates.latitude, lng: coordinates.longitude };
-      this.map = new google.maps.Map(
-        this.mapContainer.nativeElement,
-        {
-          zoom: 10,
-          center: myplace,
-        }
-      );
+      // let coordinates = location.coords;
+      // const myplace = { lat: coordinates.latitude, lng: coordinates.longitude };
+      // this.map = new google.maps.Map(
+      //   this.mapContainer.nativeElement,
+      //   {
+      //     zoom: 10,
+      //     center: myplace,
+      //   }
+      // );
+
+      const mapOptions: google.maps.MapOptions = {
+        center: { lat: 22.2598107, lng: 70.7287299 },
+        zoom: 10
+      };
+      this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
 
       this.geocoder = new google.maps.Geocoder();
       this.polyline = new google.maps.Polyline({

@@ -17,6 +17,7 @@ import { Zone } from '../../models/zone';
 import { Country } from '../../models/country';
 import { SocketService } from '../../services/socket.service';
 import { ThisReceiver } from '@angular/compiler';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-driver-list',
@@ -183,7 +184,7 @@ export class DriverListComponent implements OnInit {
     }
   }
   getUserPic(iconName: string): string {
-    return `http://localhost:3000/uploads/driver_list_profile/${iconName}`;
+    return `${environment.apiUrl}/uploads/driver_list_profile/${iconName}`;
   }
 
   getCurrentId(driver: any) {

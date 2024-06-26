@@ -151,7 +151,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   getUserPic(iconName: string): string {
-    return `http://localhost:3000/uploads/userProfilePic/${iconName}`;
+    return `${environment.apiUrl}/uploads/userProfilePic/${iconName}`;
   }
 
   editUser(user: any) {
