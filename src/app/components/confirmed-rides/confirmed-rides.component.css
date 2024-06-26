@@ -1,0 +1,53 @@
+.statusbadge {
+    padding: 0.25em 0.5em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-weight: bold;
+    display: inline-block;
+  }
+  
+  .badge-assigning {
+    background-color: #17a2b8; 
+    color: #fff;
+  }
+  
+  .badge-rejected {
+    background-color: #dc3545; 
+    color: #fff;
+  }
+  
+  .badge-accepted {
+    background-color: #28a745; 
+    color: #fff;
+  }
+  
+  .badge-arrived {
+    background-color: #28a745; 
+    color: #fff;
+  }
+  
+  .badge-started {
+    background-color: #28a745; 
+    color: #fff;
+  }
+  
+  .badge-completed {
+    background-color: #28a745; 
+    color: #fff;
+  }
+  
+  .badge-hold {
+    background-color: #f8f9fa;
+    color: #212529;
+  }
+  
+  .badge-picked {
+    background-color: #28a745; 
+    color: #fff;
+  }
+  
+  .badge-pending {
+    background-color: #ffc107; 
+    color: #212529;
+  }
+  

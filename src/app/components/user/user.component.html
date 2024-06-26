@@ -1,0 +1,243 @@
+<!-- Button trigger modal -->
+<div class="container-fluid d-grid mb-2  pt-5 ">
+  <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
+    (click)="btn_name_chenge(); resetForm()">
+    ADD USER
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">{{ btn_name === 'submit' ? 'Add User' : 'Edit User' }}</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- User Profile Form -->
+        <div class="container pt-3">
+          <div class="row justify-content-center">
+            <div class="">
+              <form [formGroup]="userProfileForm" (submit)="btn_name === 'submit' ? submitUserProfile() : updateUser()">
+
+                <!-- User Profile (Photo Upload) -->
+                <div class="form-group">
+                  <label for="profilePic">User Profile</label>
+                  <input #fileInput formControlName="profilePic" type="file" id="profilePic" accept="image/*"
+                    (change)="handleFileInput($event)" class="form-control">
+
+                  <div *ngIf="userProfileForm.get('profilePic')?.invalid && userProfileForm.get('profilePic')?.touched"
+                    class="alert alert-danger">
+                    Profile picture is required.
+                  </div>
+                </div>
+
+                <!-- User Name -->
+                <div class="form-group">
+                  <label for="username">User Name</label>
+                  <input type="text" formControlName="username" class="form-control" id="username"
+                    placeholder="Enter username">
+                  <!-- validation -->
+                  <div
+                    *ngIf="userProfileForm.get('username')?.invalid && (userProfileForm.get('username')?.dirty || userProfileForm.get('username')?.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="userProfileForm.get('username')?.errors?.['required']">Username is
+                      required.</div>
+                    <div *ngIf="userProfileForm.get('username')?.hasError('notSymbol')"
+                      class="alert alert-danger">
+                      special characters like , '$', or '!' not allow
+                    </div>
+                    <div *ngIf="userProfileForm.get('username')?.hasError('alphabeticOnly')" class="alert alert-danger">
+                      only contain alphabetic characters
+                    </div>
+                  </div>
+                </div>
+
+                <!-- User Email -->
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" formControlName="email" class="form-control" id="email" placeholder="Enter email">
+                  <!-- validaton -->
+                  <div
+                    *ngIf="userProfileForm.get('email')?.invalid && (userProfileForm.get('email')?.dirty || userProfileForm.get('email')?.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="userProfileForm.get('email')?.errors?.['required']">Email is required.</div>
+                    <div *ngIf="userProfileForm.get('email')?.errors?.['email']">Invalid email format.</div>
+                  </div>
+                </div>
+
+                <!-- User Phone with Country Code -->
+                <div class="form-group">
+                  <label for="phone">Phone</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <select class="custom-select form-control" formControlName="countryCode"  (change)="onCountryChenge($event)">
+                        <option value="" disabled selected>Select Country Code</option>
+                        <ng-container *ngFor="let country of countries" >
+                          <option [ngValue]="{ id: country._id, code: country.country_calling_code }">{{country.countryName+"
+                            "+'('+country.country_calling_code+')' }}</option>
+                        </ng-container>
+                      </select>
+                      <input type="button" formControlName="selectedCode" *ngIf="btn_name=='submit'?false:true" readonly>
+                    </div>
+
+                    <!-- phone -->
+                    <input type="tel" formControlName="phone" class="form-control" id="phone" [maxLength]="10" minlength="10"
+                      placeholder="Enter phone number"pattern="[0-9]{10}"
+                      title="Phone number should be 10 degits">
+                  </div>
+                  <!--country code validation -->
+                  <div
+                    *ngIf="userProfileForm.get('countryCode')?.invalid && (userProfileForm.get('countryCode')?.dirty || userProfileForm.get('countryCode')?.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="userProfileForm.get('countryCode')?.errors?.['required']">Country code is required.
+                    </div>
+                    <div *ngIf="userProfileForm.get('countryCode')?.errors?.['pattern']">Invalid country code format.
+                      Please enter only digits.</div>
+                  </div>
+                  <!--phone validation -->
+
+                  <div
+                    *ngIf="userProfileForm.get('phone')?.invalid && (userProfileForm.get('phone')?.dirty || userProfileForm.get('phone')?.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="userProfileForm.get('phone')?.errors?.['required']">Phone number is required.</div>
+                    <div *ngIf="userProfileForm.get('phone')?.errors?.['pattern']">Invalid phone number format.</div>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2 mt-3">
+                  <button type="submit" [disabled]="btn_name=='submit'&&userProfileForm.invalid" data-bs-dismiss="modal"
+                    class="btn btn-primary btn-block">{{btn_name}}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Search Form -->
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <input class="form-control " type="text" [(ngModel)]="search_query" (keyup.enter)="search()"
+        placeholder="Search by username, email, or phone">
+    </div>
+
+  </div>
+</div>
+
+<!-- User Table -->
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table table-striped " matSort [matSortDirection]="'asc'">
+          <thead>
+            <tr>
+              <th>Profile Pic</th>
+              <th mat-sort-header="username" (click)="sortData('username')">Username</th>
+              <th mat-sort-header="email" (click)="sortData('email')">Email</th>
+              <th mat-sort-header="phone" (click)="sortData('phone')">Phone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of allUsers;">
+
+              <td><img [src]="getUserPic(user.profilePic)" style="max-width: 50px; max-height: 50px;"></td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.countryCode }} {{user.phone}}</td>
+              <td>
+                <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="modal"
+                  data-bs-target="#cardDetail" (click)="selectedCostomer(user.stripeCustomerId)">My Card</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary me-2"
+                  (click)="editUser(user)">Edit</button>
+                <button type="button" class="btn btn-danger me-2" (click)="deleteUser(user._id)">Delete</button>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="container-fluid">
+  <mat-paginator class="d-flex justify-content-center" hidePageSize="true" [length]="totalItems" [pageSize]="itemsPerPage"
+  (page)="onPageChange($event)">
+</mat-paginator>
+</div>
+
+<!-- card detai modal -->
+<div class="modal fade " id="cardDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="staticBackdropLabel"><b>Card Detail</b></h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div #cardElement></div>
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-primary mt-3" (click)="onSubmit()">Add Card</button>
+        </div>
+      </div>
+      <!-- table -->
+      <table class="table-responsive m-4">
+        <thead>
+          <tr>
+            <th>Set Default</th>
+            <th>Card Brand</th>
+            <th>Last 4 Digits</th>
+            <th>Expiration Month</th>
+            <th>Expiration Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let card of cards">
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" [checked]="card.isChecked" [value]="card.id"
+                  (change)="toggleCardSelection($event, card)">
+              </div>
+            </td>
+            <td>
+
+              <img *ngIf="card.brand === 'Visa'" src="../../../assets/cardImage/visa.png" alt="Visa">
+
+              <img *ngIf="card.brand === 'MasterCard'"  src="../../../assets/cardImage/master.png" alt="MasterCard">
+
+              <img *ngIf="card.brand === 'American Express'"
+                src="../../../assets/cardImage/AmericanExpress.png" alt="American Express"style="width: 42px; height: 30px;">
+
+              <img *ngIf="card.brand === 'Discover'" src="../../../assets/cardImage/discover.png"
+                alt="Discover">
+
+            </td>
+            <td>{{ card.last4 }}</td>
+            <td>{{ card.exp_month }}</td>
+            <td>{{ card.exp_year }}</td>
+            <td><button class="btn btn-danger" (click)="deleteCard(card.id)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- table -->
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

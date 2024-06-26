@@ -1,0 +1,411 @@
+
+
+<!-- ------------------------------------------------------------------------------- -->
+<!-- filter -->
+<div class="container-fluid ">
+    <div class="input-group-prepend  ">
+        <div class="navbar navbar-dark bg-secondary mt-5 d-flex align-items-center justify-content-center">
+            <h1 class="pt-3">Confirm Ride</h1>
+          </div>
+        <div class="container d-flex pt-4 ">
+            <div class="col-6">
+    
+                <select class="custom-select form-control p" id="filter-dropdown" [(ngModel)]="statusSearch">
+        
+                    <option value="" disabled selected>Select Country Code</option>
+                    <option value="-1">Select Status</option>
+                <option [value]="0">Pending</option>
+                <option [value]="1">Assigning</option>
+                <option [value]="2">Rejected</option>
+                </select>
+                
+                <select class="form-control mt-2 " id="filter-dropdown" [(ngModel)]="vehicleSearch" >
+                    <option value="">Select a vehicle</option>
+                    <option [value]="vehicle._id" *ngFor="let vehicle of vehicleList">{{vehicle.name}}</option>
+                </select>
+                
+            </div>
+            <div class="col-6">
+
+                <input class="form-control" type="text" id="search-input" placeholder="Search by Req.Id, Name, Phone," [(ngModel)]="searchText">
+        
+                <input class="form-control mt-2" type="date" id="search-input" [(ngModel)]="searchDate">
+    
+            </div>
+        </div>
+         <!-- btn -->
+        <div class="mx-auto container  d-flex align-items-center justify-content-center mt-3">
+            <div class="d-grid  col-6 mx-auto">
+                <button class="btn btn-info" type="button" id="searchbtn" (click)="performSearch()">Search</button>
+            </div>
+            <div class="d-grid  col-6 mx-auto">
+                <button class="btn bg-warning text-dark" type="button" id="clearbtn" (click)="clearFields()">Clear</button>
+            </div>
+        </div>
+
+    </div>
+    <hr>
+
+</div>
+<!-- table -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table table-striped ">
+                    <thead class="bg-light text-dark">
+                        <tr>
+                            <th>Req Id</th>
+                            <th>User Id</th>
+                            <th>Username</th>
+                            <th>Pick up time</th>
+                            <th>Pick up address</th>
+                            <th>Drop off address</th>
+                            <th>Service type</th>
+                            <th>Status</th>
+                            <th>Assign</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ride of allRideList;">
+                            <td>{{ ride.uniqueId}}</td>
+                            <td>{{ ride.userId }}</td>
+                            <td>{{ride.user.username}}</td>
+                            <td>{{ ride.scheduledDate | date: 'dd-MM-yyyy' }}</td>
+                            <td>{{ride.fromLocation}}</td>
+                            <td>{{ride.toLocation}}</td>
+                            <td>{{ride.service.name}}</td>
+                    
+                    
+                            <td [ngSwitch]="ride.ridestatus">
+                                <span class="statusbadge" *ngSwitchCase="1"
+                                    [ngClass]="{'badge-assigning': ride.ridestatus === 1}">Assigning</span>
+                                <span class="statusbadge" *ngSwitchCase="2"
+                                    [ngClass]="{'badge-rejected': ride.ridestatus === 2}">Rejected</span>
+                                <span class="statusbadge" *ngSwitchCase="4"
+                                    [ngClass]="{'badge-accepted': ride.ridestatus === 4}">Accepted</span>
+                                <span class="statusbadge" *ngSwitchCase="5"
+                                    [ngClass]="{'badge-arrived': ride.ridestatus === 5}">Arrived</span>
+                                <span class="statusbadge" *ngSwitchCase="6"
+                                    [ngClass]="{'badge-started': ride.ridestatus === 6}">Started</span>
+                                <span class="statusbadge" *ngSwitchCase="7"
+                                    [ngClass]="{'badge-completed': ride.ridestatus === 7}">Completed</span>
+                                <span class="statusbadge" *ngSwitchCase="8" [ngClass]="{'badge-hold': ride.ridestatus === 8}">Hold</span>
+                                <span class="statusbadge" *ngSwitchCase="9"
+                                    [ngClass]="{'badge-picked': ride.ridestatus === 9}">Picked</span>
+                                <span class="statusbadge" [ngClass]="{'badge-pending': ride.ridestatus === 0}"
+                                    *ngSwitchDefault>Pending</span>
+                            </td>
+                    
+                    
+                            <td>
+                                <button class="btn btn-success" *ngIf="ride.driverId">{{ride.driver.username }}</button>
+
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignModel" *ngIf="!ride.driverId &&  ride.ridestatus===0 && ride.assigned==null"
+                                    (click)="openAssignDriverDialog(ride)">Assign</button>
+
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#assignModel" *ngIf="!ride.driverId &&  ride.ridestatus===0 && ride.assigned >= 1"
+                                    (click)="openAssignDriverDialog(ride)">Reassign</button>
+
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#assignModel" *ngIf="!ride.driverId &&  ride.ridestatus===2"
+                                    (click)="openAssignDriverDialog(ride)">Reassign</button>
+                                    
+                            </td>
+                    
+                            <!-- --------------------------show info  -->
+                            <td>
+                    
+                                <div class="dropdown">
+                                    <button class=" btn btn-secondary dropdown-toggle" type="button " id="dropdownMenu2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                    
+                                    <ul class=" dropdown-menu " aria-labelledby="dropdownMenu2">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#infoModel"
+                                                class="btn btn-sm btn-outline-primary me-2 ms-2" (click)="rideInfo(ride._id)">Info</button>
+                                            <button *ngIf="ride.ridestatus === 0 || ride.ridestatus === 2" type="button"
+                                                class="btn btn-sm btn-outline-danger me-2 ms-2"
+                                                (click)="cancelRide(ride._id)">Cancel</button>
+                                        </div>
+                                    </ul>
+                                </div>
+                            </td>
+                    
+                            <!-- --------------------------show info  -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="container-fluid">
+    <mat-paginator class="d-flex justify-content-center" hidePageSize="true" [length]="totalItems"
+        [pageSize]="itemsPerPage" (page)="onPageChange($event)">
+    </mat-paginator>
+</div>
+
+<!-- socket connection
+
+<input type="text" [(ngModel)]="messageInput" placeholder="Enter message">
+<button (click)="sendMessage(messageInput)">Send</button> -->
+
+  <!-- //////////////////////////// -->
+
+<!------------------------------ info model -------------------------->
+
+<div class="modal fade" id="infoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Ride Information</h2>
+            </div>
+
+            <div class="modal-body">
+                <ng-container *ngFor="let data of infoData">
+                    <div class=" d-flex justify-content-between">
+
+                        <div class="">
+                            <div>
+                                <b>Request Id :</b>
+                                <p>{{ data.uniqueId }}</p>
+                            </div>
+
+                            <div>
+                                <b>User Id :</b>
+                                <p>{{ data.user._id }}</p>
+                            </div>
+                            <div>
+                                <b>User Name :</b>
+                                <p>{{ data.user.username }}</p>
+                            </div>
+                            <div>
+                                <b>User Email :</b>
+                                <p>{{ data.user.email }}</p>
+                            </div>
+                            <div>
+                                <b>User Phone :</b>
+                                <p>{{ data.user.phone }}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">User Profile</b>
+                            <p><img [src]="getUserPic(data.user.profilePic)" style="max-width: 50px; max-height: 50px;">
+                            </p>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-between">
+
+
+                        <div class="">
+                            <div>
+                                <b>Start Location :</b>
+                                <p>{{ data.fromLocation }}</p>
+                            </div>
+
+                            <div>
+                                <b>End Location :</b>
+                                <p>{{ data.toLocation }}</p>
+                            </div>
+                            <div>
+                                <b>Stop Point :</b>
+                                <ng-container *ngFor="let stop of data.stopValue; let last = last">
+                                    {{ stop }}
+                                    <ng-container *ngIf="!last">
+                                        {{ ', ' }}
+                                    </ng-container>
+                                    <br>
+                                </ng-container>
+                            </div>
+                            <div>
+                                <b>Sevice Type :</b>
+                                <p>{{ data.service.name }}</p>
+                            </div>
+                            <div>
+                                <b>Total Distance:</b>
+                                <p>{{ data.totalDistanceKm }} Km</p>
+                            </div>
+                            <div>
+                                <b>Total Duration :</b>
+                                <p>{{ data.totalDurationMin | durationConvert}}</p>
+                            </div>
+                            <div>
+                                <b>EstimeteFare:</b>
+                                <p>₹ {{ data.estimeteFare | number: '1.2-2'}}</p>
+                            </div>
+                            <div>
+                                <b>Booking Time :</b>
+                                <p>{{ data.scheduledDate | date: 'medium'}}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">Service Profile</b>
+                            <p><img [src]="getServiceIcon(data.service.icon)"
+                                    style="max-width: 50px; max-height: 50px;"></p>
+                        </div>
+                    </div>
+
+                </ng-container>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+  
+<!-------------------------------- assign dilog model ---------------------->
+
+<div class="modal modal-dialog modal-xl" id="assignModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Ride Information</h2>
+            </div>
+
+            <div class="modal-body">
+                <!-- table -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="bg-light text-dark">
+                            <tr>
+                                <th>Profile</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>City</th>
+                                <th>Service</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="driverArray.length > 0">
+                            <tr *ngFor="let driver of driverArray">
+                                <td><img [src]="getDriverPic(driver.profilePic)" style="max-width: 50px; max-height: 50px;" alt="driver-profile" /></td>
+                                <td>{{ driver.username }}</td>
+                                <td>{{ driver.email }}</td>
+                                <td>{{ driver.phone }}</td>
+                                <td>{{ driver.city.name }}</td>
+                                <td *ngIf="!driver.serviceID">No Service</td>
+                                <td *ngIf="driver.serviceID">{{ driver.service.name }}</td>
+                                <td>
+                                    <button class="btn btn-primary" (click)="assignDriver(driver)" data-bs-dismiss="modal">Assign Driver</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <div *ngIf="driverArray.length === 0" class="text-danger">No driver available</div>
+                    </table>
+                </div>
+                
+                <!--show all data -->
+                <ng-container *ngFor="let data of dataArray">
+                <div class=" d-flex justify-content-between">
+
+                    <div class="">
+                        <div>
+                            <b>Request Id :</b>
+                            <p>{{ data.uniqueId }}</p>
+                        </div>
+
+                        <div>
+                            <b>User Id :</b>
+                            <p>{{ data.user._id }}</p>
+                        </div>
+                        <div>
+                            <b>User Name :</b>
+                            <p>{{ data.user.username }}</p>
+                        </div>
+                        <div>
+                            <b>User Email :</b>
+                            <p>{{ data.user.email }}</p>
+                        </div>
+                        <div>
+                            <b>User Phone :</b>
+                            <p>{{ data.user.phone }}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="">
+                        <b class="me-2">User Profile</b>
+                        <p><img [src]="getUserPic(data.user.profilePic)" style="max-width: 50px; max-height: 50px;">
+                        </p>
+                    </div>
+                </div>
+                <div class=" d-flex justify-content-between">
+
+
+                    <div class="">
+                        <div>
+                            <b>Start Location :</b>
+                            <p>{{ data.fromLocation }}</p>
+                        </div>
+                        
+                        <div>
+                            <b>End Location :</b>
+                            <p>{{ data.toLocation }}</p>
+                        </div>
+                        <div>
+                            <b>Stop Point :</b>
+                            <ng-container *ngFor="let stop of data.stopValue; let last = last">
+                                {{ stop }}
+                                <ng-container *ngIf="!last">
+                                    {{ ', ' }}
+                                </ng-container>
+                                <br>
+                            </ng-container>
+                        </div>
+                        <div>
+                            <b>Sevice Type :</b>
+                            <p>{{ data.service.name }}</p>
+                        </div>
+                        <div>
+                            <b>Total Distance :</b>
+                            <p>{{ data.totalDistanceKm }} Km</p>
+                        </div>
+                        <div>
+                            <b>Total Duration :</b>
+                            <p>{{ data.totalDurationMin | durationConvert}}</p>
+                        </div>
+                        <div>
+                            <b>EstimeteFare:</b>
+                            <p>  {{ data.estimeteFare | number: '1.2-2' }}</p>
+                        </div>
+                        <div>
+                            <b>Booking Time :</b>
+                            <p>{{ data.scheduledDate |date: 'medium'}}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="">
+                        <b class="me-2">Service Profile</b>
+                        <p><img [src]="getServiceIcon(data.service.icon)"
+                            style="max-width: 50px; max-height: 50px;"></p>
+                        </div>
+                    </div>
+                    
+                </ng-container>
+                <!-- all data -->
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-info" (click)="NearestDriver()" data-bs-dismiss="modal">Assign Any Available Driver</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+  
+

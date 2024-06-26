@@ -1,0 +1,114 @@
+<div class="container mb-5 ">
+  <nav class="navbar bg-light fixed-top">
+    <div class="container-fluid">
+
+      <button [disabled]="checkloginbtn" class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- //////////////////login -->
+      <div class=" d-flex">
+
+        <!-- notification -->
+        <div type="" class=" position-relative btn-sm me-5 mt-1">
+          <!-- Inbox -->
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{notif_counter}}
+          </span>
+          <i style="font-size:24px" class="fa">&#xf0f3;</i>
+        </div>
+
+
+        <!-- <a routerLink="/login" RouterLinkActive="active" class="text-center btn btn-primary btn-sm me-2">login </a> -->
+        <!-- <a routerLink="/dashboard" RouterLinkActive="active" class="text-center btn btn-primary">dashboard</a> -->
+        <a routerLink="/logout" RouterLinkActive="active" class="text-center btn btn-primary btn-sm"
+          (click)="logout()">logout</a>
+      </div>
+      <!-- //////////////////login over -->
+
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h2 class="offcanvas-title" id="offcanvasNavbarLabel">MENU</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <a routerLink="/admin/dashboard" RouterLinkActive="active"  data-bs-dismiss="offcanvas" class="text-center btn btn-secondary">dashboard</a>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+
+
+            <!-- Rides //////////////////////////////////////////////// -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Rides
+              </a>
+              <ul class="dropdown-menu">
+
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" aria-current="page" routerLink="/admin/create_ride"
+                  RouterLinkActive="active">Create Ride</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" aria-current="page" routerLink="/admin/confirmed_rides"
+                  RouterLinkActive="active">Confirmed Rides</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" aria-current="page" routerLink="/admin/ride_history"
+                  RouterLinkActive="active">Ride History</a></li>
+
+              </ul>
+            </li>
+            <!-- ///////////////////////////////////////////////// -->
+
+         
+            <li class="nav-item">
+              <a class="nav-link " data-bs-dismiss="offcanvas" aria-current="page" routerLink="/admin/user"
+                RouterLinkActive="active"> User</a>
+            </li>
+            <!-- //////////////////////////////////////////////////// -->
+            <!-- //////////////////////////////////////////////////// -->
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Drivers
+              </a>
+              <ul class="dropdown-menu">
+
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/driver-list"
+                    RouterLinkActive="active">List</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/running_request"
+                    RouterLinkActive="active">Running request</a></li>
+
+              </ul>
+            </li>
+
+            <!-- //////////////////////////////////////////////////// -->
+            <!-- //////////////////////////////////////////////////// -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Pricing
+              </a>
+              <ul class="dropdown-menu">
+
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/country">Country</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/city">City</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/Vehicle_type"
+                    RouterLinkActive="active">Vehicle type</a></li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="/admin/vehicle_pricing"
+                    RouterLinkActive="active" vehicle_pricing>Vehicle Pricing</a></li>
+              </ul>
+            </li>
+
+            <!-- //////////////////////////////////////////////////// -->
+            <!-- ///////////////////////////////////////////////// -->
+
+            <li class="nav-item">
+              <a class="nav-link " data-bs-dismiss="offcanvas" aria-current="page" routerLink="/admin/settings"
+                RouterLinkActive="active"> Settings</a>
+            </li>
+            <!-- //////////////////////////////////////////////////// -->
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+</div>

@@ -1,0 +1,202 @@
+<div class="container-fluid pt-2">
+    <!-- ---------heading----------->
+    <div class="navbar navbar-dark bg-secondary mt-5 d-flex align-items-center justify-content-center">
+        <h1>Running Request</h1>
+      </div>
+    <!-- ---------table----------->
+    <div *ngIf="!assignedArray || assignedArray.length === 0" class="no-records-label">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center align-items-center pt-5">
+                    <p class="text-danger">No records found</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div *ngIf=" assignedArray && assignedArray.length > 0">
+      <div class="parentFormContainer ">
+        <div id="tableContainer">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="bg-light text-dark">
+                <tr>
+                  <th>User Profile</th>
+                  <th>User Name</th>
+                  <th>User Phone</th>
+                  <!-- <th>Ride ID</th>  -->
+                  <th>Driver Name</th>
+                  <th>Driver Phone</th>
+                  <th>Pick up Time</th>
+                  <th>Pick up Address</th>
+                  <th>Drop off Address</th>
+                  <th>Service Type</th>
+                  <th>Vehicle Image</th>
+                  <th>Status</th>
+                  <!-- <th>Estimate Fare</th> -->
+                  <th>Action</th>
+                  <th>Time Left</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of assignedArray"  >
+                  <td><img [src]="getUserPic(data.user.profilePic)" style="max-width: 50px; max-height: 50px;"></td>
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.user.username}}</td>
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.user.phone}}</td>
+                  <!-- <td>{{data._id}}</td> -->
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.driver.username}}</td>
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.driver.phone}}</td>
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.scheduledDate }}</td>
+                  <td class="fixed-width" data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.fromLocation}}</td>
+                  <td class="fixed-width" data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)">{{data.toLocation}}</td>
+                  <td>{{data.service.name}}</td>
+                  <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(data._id)"><img [src]="getServiceIcon(data.service.icon)"
+                    style="max-width: 50px; max-height: 50px;" alt="vehicle-image"></td>
+                  <!-- <td>{{data.status}}</td> -->
+                  <!-- status show -->
+                  <td [ngSwitch]="data.ridestatus">
+                    <span class="statusbadge" *ngSwitchCase="4" [ngClass]="{'badge-accepted': data.ridestatus === 4}">Accepted</span>
+                    <span class="statusbadge" *ngSwitchCase="5" [ngClass]="{'badge-arrived': data.ridestatus === 5}">Arrived</span>
+                    <span class="statusbadge" *ngSwitchCase="6" [ngClass]="{'badge-started': data.ridestatus === 6}">Started</span>
+                    <span class="statusbadge" *ngSwitchCase="7" [ngClass]="{'badge-completed': data.ridestatus === 7}">Completed</span>
+                    <span class="statusbadge" *ngSwitchCase="9" [ngClass]="{'badge-picked': data.ridestatus === 9}">Picked</span>
+                    <span class="statusbadge" [ngClass]="{'badge-pending': data.ridestatus === 0}" *ngSwitchDefault>Pending</span>
+                  </td>
+                <!-- accept btn show -->
+                  <!-- <td>{{data.estimateFare}}</td> -->
+                  <td class="d-flex gap-3" [ngSwitch]="data.ridestatus">
+                    <button class="btn btn-light border" *ngSwitchCase="1" (click)="acceptRide(data)">Accept Ride</button>
+                    <button class="btn btn-light border" *ngSwitchCase="9" (click)="startRide(data)">Start</button>
+                    <button class="btn btn-light border" *ngSwitchCase="4" (click)="arriveRide(data)">Arrive</button>
+                    <button class="btn btn-light border" *ngSwitchCase="5" (click)="pickRide(data)">Pick Up</button>
+                    <button class="btn btn-light border" *ngSwitchCase="6" (click)="completeRide(data);freerideanddriver(data)">Complete</button>
+                  
+                
+                    <!-- ride reject btn -->
+                    <button class="btn btn-danger norder"  *ngIf="data.ridestatus === 1 || data.ridestatus === 4 || data.ridestatus === 5 || data.ridestatus === 9" data-bs-target="null" (click)="rejectRide(data)">Reject Ride</button>
+                  </td>
+                    <!-- <button class="btn btn-danger norder"  *ngIf="data.ridestatus === 1 || data.ridestatus === 8 "
+                    data-bs-target="null" (click)="rejectRide(data)">Reject Ride</button> 
+                    </td>
+                -->
+                  <!-- timer -->
+                  <td>{{ data.countdown}}</td>
+                </tr>
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  
+
+  <!-- ---------------info model --------------------------------->
+<div class="modal fade" id="infoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Running Request Information</h2>
+            </div>
+
+            <div class="modal-body">
+                <ng-container *ngFor="let data of infoData">
+                    <div class=" d-flex justify-content-between">
+
+                        <div class="">
+                            <div>
+                                <b>Request Id :</b>
+                                <p>{{ data._id }}</p>
+                            </div>
+
+                            <div>
+                                <b>User Id :</b>
+                                <p>{{ data.user._id }}</p>
+                            </div>
+                            <div>
+                                <b>User Name :</b>
+                                <p>{{ data.user.username }}</p>
+                            </div>
+                            <div>
+                                <b>User Email :</b>
+                                <p>{{ data.user.email }}</p>
+                            </div>
+                            <div>
+                                <b>User Phone :</b>
+                                <p>{{ data.user.phone }}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">User Profile</b>
+                            <p><img [src]="getUserPic(data.user.profilePic)" style="max-width: 50px; max-height: 50px;">
+                            </p>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-between">
+
+
+                        <div class="">
+                            <div>
+                                <b>Start Location :</b>
+                                <p>{{ data.fromLocation }}</p>
+                            </div>
+
+                            <div>
+                                <b>End Location :</b>
+                                <p>{{ data.toLocation }}</p>
+                            </div>
+                            <div>
+                                <b>Stop Point :</b>
+                                <ng-container *ngFor="let stop of data.stopValue; let last = last">
+                                    {{ stop }}
+                                    <ng-container *ngIf="!last">
+                                        {{ ', ' }}
+                                    </ng-container>
+                                    <br>
+                                </ng-container>
+                            </div>
+                            <div>
+                                <b>Sevice Type :</b>
+                                <p>{{ data.service.name }}</p>
+                            </div>
+                            <div>
+                                <b>Total DistanceKm :</b>
+                                <p>{{ data.totalDistanceKm }} Km</p>
+                            </div>
+                            <div>
+                                <b>Total Duration :</b>
+                                <p>{{ data.totalDurationMin  | durationConvert}}</p>
+                            </div>
+                            <div>
+                                <b>EstimeteFare:</b>
+                                <p>₹ {{ data.estimeteFare | number: '1.2-2' }}</p>
+                            </div>
+                            <div>
+                                <b>Booking Time :</b>
+                                <p>{{ data.scheduledDate |date: 'medium'}}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">Service Profile</b>
+                            <p><img [src]="getServiceIcon(data.service.icon)"
+                                    style="max-width: 50px; max-height: 50px;"></p>
+                        </div>
+                    </div>
+
+                </ng-container>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

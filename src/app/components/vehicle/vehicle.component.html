@@ -1,0 +1,79 @@
+<div class="container ">
+  <div class="row  d-flex align-items-center justify-content-center">
+    <div class="navbar navbar-dark bg-secondary mt-5 d-flex align-items-center justify-content-center">
+      <h1>Vehicle List</h1>
+    </div>
+    
+    <div class="col-md-5">
+      <h2>{{btn_name}}</h2>
+      <form (ngSubmit)="btn_name === 'Update' ? onUpdate() : onSubmit()" [formGroup]="myForm">
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Name:</label>
+          <input type="text" class="form-control" id="name" formControlName="name" required>
+
+          <div *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched">
+
+            <div *ngIf="myForm.get('name')?.errors?.['firstCharIsNotLetter']" class="alert alert-danger">
+              The first character must be a letter.
+            </div>
+            <div *ngIf="myForm.get('name')?.errors?.['required']" class="alert alert-danger">
+              vehicle name is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="icon" class="form-label">Icon:</label>
+          <input type="file" #iconInput class="form-control" id="icon" (change)="onFileSelected($event)"
+            accept=".png, .jpg, .jpeg" formControlName="icon">
+
+          <div *ngIf="myForm.get('icon')?.invalid && myForm.get('icon')?.touched">
+
+            <div *ngIf="myForm.get('icon')?.errors?.['firstCharIsNotLetter']" class="alert alert-danger">
+              The first character must be a letter.
+            </div>
+            <div *ngIf="myForm.get('icon')?.errors?.['required']" class="alert alert-danger">
+              vehicle icon is required.
+            </div>
+          </div>
+
+          <span style="color: brown;">Your previous Uploaded Icon : {{priviosIconName}}</span>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary"
+            [disabled]="myForm.invalid && btn_name !== 'Update'">{{btn_name}}</button>
+          <button type="reset" class="btn btn-primary" (click)="removeFormData()"
+            *ngIf="showCancelButton">cancel</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-7">
+      <!-- <div class="row mt-4"> -->
+        <!-- <div class="col-md-12"> -->
+          <div class="table-responsive mt-5" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-striped">
+              <thead class="sticky-header">
+                <tr class="table-primary text-white">
+                  <th>Index</th>
+                  <th>Name</th>
+                  <th>Icon</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let vehicle of vehicles; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ vehicle.name }}</td>
+                  <td><img [src]="getIconUrl(vehicle.icon)" alt="Vehicle Icon" class="img-fluid" width="50" height="50">
+                  </td>
+                  <td><button (click)="editVehicle(vehicle)" class="btn btn-primary">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <!-- </div> -->
+    <!-- </div> -->
+  </div>
+</div>

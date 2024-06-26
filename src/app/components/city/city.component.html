@@ -1,0 +1,66 @@
+
+
+<!-- show selected zone wise sitys -->
+<div class="container-fluid mb-2">
+  <mat-form-field class="mt-1">
+    <mat-label>select country</mat-label>
+    <mat-select [(value)]="selectedCountryReset" (selectionChange)="onCountrySelection($event)">
+      @for (country of countries; track country) {
+        <mat-option [value]="{name: country.countryName, code: country.short_name,_id:country._id}">{{country.countryName}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <input id="searchCity" placeholder="searchCity" class="form-control mb-2 controls" type="text"/>
+  <div class="row">
+    <div class="d-grid col-6 mx-auto">
+      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)=" resetAutocomplete()">
+        Saved City
+      </button>
+    </div>
+    <div class="col d-grid gap-2 d-md-flex justify-content-md-end">
+      <button (click)="saveZone()" class="btn btn-outline-success" [disabled]="isDissSavebtn">Save Zone</button>
+      <button (click)="updateZone()" [disabled]="isDissUpdatebtn" class="btn btn-info">Update Zone</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div #mapContainer style="width: 99vw;
+height: 90vh;"></div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">saved zone</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Country Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ul>
+              <li *ngFor="let zone of zones; let i = index" (click)="selectZone(zone)">
+                <span class="btn"data-bs-dismiss="modal">{{ i + 1 }}. {{ zone.name }}</span>
+              </li>
+            </ul>              
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ 
+  
+  

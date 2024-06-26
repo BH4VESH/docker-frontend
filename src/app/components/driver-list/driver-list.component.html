@@ -1,0 +1,315 @@
+<!-- Button trigger modal -->
+<div class="container-fluid d-grid mb-2 pt-5">
+    <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
+        (click)="btn_name_chenge();fetchCountries(); resetForm()">
+        Add Driver
+    </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">{{ btn_name === 'submit' ? 'Add Driver' : 'Edit Driver'
+                    }}</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- User Profile Form -->
+                <div class="container pt-3">
+                    <div class="row justify-content-center">
+                        <div class="">
+                            <form [formGroup]="userProfileForm"
+                                (submit)="btn_name === 'submit' ? submitDriverProfile() : updateDriver()">
+
+                                <!-- User Profile (Photo Upload) -->
+                                <div class="form-group">
+                                    <label for="profilePic">User Profile</label>
+                                    <input #fileInput formControlName="profilePic" type="file" id="profilePic"
+                                        accept=".png, .jpg, .jpeg" (change)="handleFileInput($event)"
+                                        class="form-control">
+
+                                    <div *ngIf="userProfileForm.get('profilePic')?.invalid && userProfileForm.get('profilePic')?.touched"
+                                        class="alert alert-danger">
+                                        Profile picture is required.
+                                    </div>
+                                </div>
+
+                                <!-- User Name -->
+                                <div class="form-group">
+                                    <label for="username">User Name</label>
+                                    <input type="text" formControlName="username" class="form-control" id="username"
+                                        placeholder="Enter username">
+                                    <!-- validation -->
+                                    <div *ngIf="userProfileForm.get('username')?.invalid && (userProfileForm.get('username')?.dirty || userProfileForm.get('username')?.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="userProfileForm.get('username')?.errors?.['required']">Username is
+                                            required.</div>
+                                        <div *ngIf="userProfileForm.get('username')?.hasError('notSymbol')"
+                                            class="alert alert-danger">
+                                            special characters like , '$', or '!' not allow
+                                        </div>
+                                        <div *ngIf="userProfileForm.get('username')?.hasError('alphabeticOnly')"
+                                            class="alert alert-danger">
+                                            only contain alphabetic characters
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- User Email -->
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" formControlName="email" class="form-control" id="email"
+                                        placeholder="Enter email">
+                                    <!-- validaton -->
+                                    <div *ngIf="userProfileForm.get('email')?.invalid && (userProfileForm.get('email')?.dirty || userProfileForm.get('email')?.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="userProfileForm.get('email')?.errors?.['required']">Email is
+                                            required.</div>
+                                        <div *ngIf="userProfileForm.get('email')?.errors?.['email']">Invalid email
+                                            format.</div>
+                                    </div>
+                                </div>
+
+                                <!-- User Phone with Country Code -->
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <select class="custom-select form-control" formControlName="countryCode" (click)="fetchCity($event)">
+                                                <option value="" disabled selected>Select Country Code</option>
+                                                <ng-container *ngFor="let country of countries">
+                                                    <option [value]="country._id">
+                                                        {{country.countryName+"
+                                                        "+'('+country.country_calling_code+')' }}</option>
+                                                </ng-container>
+                                            </select>
+                                        </div>
+
+                                        <!-- phone -->
+                                        <input type="tel" formControlName="phone" class="form-control" id="phone"
+                                            [maxLength]="10" minlength="10" placeholder="Enter phone number"
+                                            pattern="[0-9]{10}" title="Phone number should be 10 degits">
+                                    </div>
+                                    <!--country code validation -->
+                                    <div *ngIf="userProfileForm.get('countryCode')?.invalid && (userProfileForm.get('countryCode')?.dirty || userProfileForm.get('countryCode')?.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="userProfileForm.get('countryCode')?.errors?.['required']">Country
+                                            code is required.
+                                        </div>
+                                        <div *ngIf="userProfileForm.get('countryCode')?.errors?.['pattern']">Invalid
+                                            country code format.
+                                            Please enter only digits.</div>
+                                    </div>
+                                    <!--phone validation -->
+
+                                    <div *ngIf="userProfileForm.get('phone')?.invalid && (userProfileForm.get('phone')?.dirty || userProfileForm.get('phone')?.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="userProfileForm.get('phone')?.errors?.['required']">Phone number is
+                                            required.</div>
+                                        <div *ngIf="userProfileForm.get('phone')?.errors?.['pattern']">Invalid phone
+                                            number format.</div>
+                                    </div>
+                                </div>
+                                <!-- city selection -->
+                                <div class="form-group">
+                                    <label for="city">city</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <select class="custom-select form-control" formControlName="city" >
+                                                <option value="" disabled>Select City</option>
+                                                <ng-container *ngFor="let city of cities">
+                                                    <option [value]="city._id">{{ city.name }}</option>
+                                                </ng-container>
+                                            </select>
+                                            <!-- <input type="button" formControlName="selectedCode"
+                                                *ngIf="btn_name=='submit'?false:true" readonly> -->
+                                        </div>
+                                    </div>
+                                    <!--city validation -->
+                                    <div *ngIf="userProfileForm.get('city')?.invalid && (userProfileForm.get('city')?.dirty || userProfileForm.get('city')?.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="userProfileForm.get('countryCode')?.errors?.['required']">City is
+                                            required.
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- Submit Button -->
+                                <div class="d-grid gap-2 mt-3">
+                                    <button type="submit" [disabled]="btn_name=='submit'&&userProfileForm.invalid"
+                                        data-bs-dismiss="modal" class="btn btn-primary btn-block">{{btn_name}}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <input class="form-control " type="text" [(ngModel)]="search_query" (keyup.enter)="search()"
+                placeholder="Search by username, email, or phone">
+        </div>
+
+    </div>
+</div>
+
+<!-- User Table -->
+<div class="container-fluid ">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table table-striped " matSort [matSortDirection]="'asc'">
+                    <thead>
+                        <tr>
+                            <th>Profile Pic</th>
+                            <th mat-sort-header="username" (click)="sortData('username')">DriverName</th>
+                            <th mat-sort-header="email" (click)="sortData('email')">Email</th>
+                            <th mat-sort-header="phone" (click)="sortData('phone')">Phone</th>
+                            <th>City</th>
+
+                            <th>Service</th>
+                            <th>Approve/Decline</th>
+                            <th>Add account</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let driver of allUsers;">
+
+                            <td><img [src]="getUserPic(driver.profilePic)" style="max-width: 50px; max-height: 50px;">
+                            </td>
+                            <td>{{ driver.username }}</td>
+                            <td>{{ driver.email }}</td>
+                            <td>{{ driver.countryCode }} {{driver.phone}}</td>
+                            <td>{{ driver.cityName }}</td>
+
+                            <td> <button type="button" class="btn btn btn-outline-info me-2" data-bs-toggle="modal"
+                                    data-bs-target="#serviceModal"
+                                    (click)="getCurrentId(driver);preSelectedchek(driver)">
+                                    Service</button></td>
+                                    
+                                    <td> <button type="button" class="btn" [ngClass]="{
+                                'btn-outline-danger': driver.status === true,
+                                'btn-outline-success': driver.status === false
+                              }" (click)="getCurrentId(driver);approveDecline(driver)"> {{ driver.status ? 'Decline' :
+                              'Approve' }}</button></td>
+
+                              <td> <button type="button" class="btn btn btn-outline-info me-2" data-bs-toggle="modal"
+                                      data-bs-target="#accountModel"
+                                      (click)="getCurrentId(driver)">
+                                      Add account</button></td>
+
+                            <td>
+
+                                <div class="dropdown">
+                                    <button class=" btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+
+                                    <ul class=" dropdown-menu " aria-labelledby="dropdownMenu2">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                class="btn btn-outline-primary ms-2 me-2"
+                                                (click)="editDriver(driver);getCurrentId(driver)">Edit</button>
+                                            <button type="button" class="btn ms-2 btn-outline-danger me-2"
+                                                (click)="deleteDriver(driver._id)">Delete</button>
+                                        </div>
+
+
+                                    </ul>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="container-fluid">
+    <mat-paginator class="d-flex justify-content-center" hidePageSize="true" [length]="totalItems"
+        [pageSize]="itemsPerPage" (page)="onPageChange($event)">
+    </mat-paginator>
+</div>
+
+
+<!-- add service -->
+<div class="modal fade " id="serviceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Add Service</h2>
+            </div>
+            <div class=" modal-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="none" name="vehicleSelection" id="vehicleNone"
+                        [checked]="isSelected('none')" (change)="onVehicleSelectionChange($event)">
+                    <label class="form-check-label" for="vehicleNone">
+                        <h2>None</h2>
+                    </label>
+                </div>
+                <div *ngFor="let vehicle of vehicles" class="form-check">
+                    <input class="form-check-input" type="radio" [value]="vehicle._id" name="vehicleSelection"
+                        id="vehicle{{vehicle._id}}" [checked]="isSelected(vehicle._id)"
+                        (change)="onVehicleSelectionChange($event)">
+                    <label class="form-check-label" for="vehicle{{vehicle._id}}">
+                        <h2>{{vehicle.name}}</h2>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="saveService()">Save
+                    changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- add account -->
+<div class="modal fade" id="accountModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-center bg-info">
+          <h2 class="text-white">Add Account</h2>
+        </div>
+        <div class="modal-body">
+          <div>
+            <h2>Add Bank Account</h2>
+            <div class="form-group">
+              <label for="accountHolderName">Account Holder Name:</label>
+              <input type="text" class="form-control" id="accountHolderName" [(ngModel)]="accountHolderName" placeholder="testAccount">
+            </div>
+            <div class="form-group">
+              <label for="routingNumber">Routing Number:</label>
+              <input type="text" class="form-control" id="routingNumber" [(ngModel)]="routingNumber" placeholder="110000000">
+            </div>
+            <div class="form-group">
+              <label for="accountNumber">Account Number:</label>
+              <input type="text" class="form-control" id="accountNumber" [(ngModel)]="accountNumber" placeholder="000123456789">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="addBankAccount()">Add Bank Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

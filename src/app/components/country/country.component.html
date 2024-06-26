@@ -1,0 +1,74 @@
+<div class="d-grid gap-2">
+  <button class="btn btn-primary mt-5" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add country</button>
+  <!-- search -->
+    <input class="form-control me-2" type="search" autofocus placeholder="Search Country" aria-label="Search" [(ngModel)]="searchQuery"  (keyup)="search()" >
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLabel">Add Country</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="countryName" class="form-label">Country Name</label>
+            <input type="text" class="form-control" id="countryName" name="countryName" [(ngModel)]="countryName" placeholder="Enter country name">
+          </div>
+          <button type="button" class="btn btn-primary" (click)="fetchCountryDetails()">Fetch Details</button>
+          <div *ngIf="countryDetails">
+            <div class="mb-3">
+              <label class="form-label">Currency</label>
+              <input type="text" class="form-control" [value]="currency" disabled>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Country Code</label>
+              <input type="text" class="form-control" [value]="country_code" disabled>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Country Calling Code</label>
+              <input type="text" class="form-control" [value]="country_calling_code" disabled>
+            </div>
+          </div>       
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+        <button type="button" class="btn btn-primary" (click)="add_table()" [disabled]="!currency">Add country</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-12">
+    <h2>Country List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>flag</th>
+          <th>Country Name</th>
+          <th>Currency</th>
+          <th>Country_code</th>
+          <th>Calling_code</th>
+          <th>Time Zone</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tdata of filteredCountryData; let i = index">
+          <td><img src="{{ tdata.flag }}" alt="country flag" height="50" width="70"></td>
+          <td>{{ tdata.countryName }}</td>
+          <td>{{ tdata.currency }}</td>
+          <td>{{ tdata.country_code }}</td>
+          <td>{{ tdata.country_calling_code }}</td>
+          <td>{{ tdata.time_zone }}</td>  
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+

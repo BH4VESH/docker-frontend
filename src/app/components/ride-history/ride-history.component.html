@@ -1,0 +1,307 @@
+<!-- ------------------------------------------------------------------------------- -->
+<!-- filter -->
+<div class="container-fluid ">
+    <div class="input-group-prepend ">
+        <div class="navbar navbar-dark bg-secondary mt-5 mb-3 align-items-center justify-content-center">
+            <h1 class="pt-3">Ride History</h1>
+        </div>
+        <div class="container  pt-2 gap-2">
+            <div class="row ">
+
+                <div class="col col-12 col-md-6 mt-2">
+                
+                    <select class="custom-select form-control" id="filter-dropdown" [(ngModel)]="statusSearch">
+                
+                        <option value="" disabled selected>Select Country Code</option>
+                        <option value="-1">Select Status</option>
+                        <option [value]="3">Canceled</option>
+                        <option [value]="7">Completed</option>
+                    </select>
+                
+                
+                    <select class="form-control mt-4 " id="filter-dropdown" [(ngModel)]="vehicleSearch">
+                        <option value="">Select a vehicle</option>
+                        <option [value]="vehicle._id" *ngFor="let vehicle of vehicleList">{{vehicle.name}}</option>
+                    </select>
+                    <input class="form-control mt-4" type="text" id="search-input" placeholder="Search by Req.Id,Location, Name, Phone,"
+                        [(ngModel)]="searchText">
+                
+                </div>
+                <div class="col col-12 col-md-6 mt-2">
+
+                    <div #formFieldContainer class="example-form-field d-grid gap-2 col-12 mx-auto ">
+                        <mat-form-field class="mb-2">
+                            <mat-label>Enter a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="rangePicker">
+                                <input class="startDate" matStartDate placeholder="Start date" [(ngModel)]="startDateObj">
+                                <input class="endDate" matEndDate placeholder="End date" [(ngModel)]="endDateObj">
+                            </mat-date-range-input>
+                            <mat-hint class="label">MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #rangePicker>
+                                <mat-date-range-picker-actions>
+                                    <button mat-button matDateRangePickerCancel>Cancel</button>
+                                    <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
+                                </mat-date-range-picker-actions>
+                            </mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+
+
+                    <!-- btn -->
+                    <!-- <div class="mx-auto container gap-2 d-flex align-items-center justify-content-center mt-3"> -->
+                    <div class="d-grid mt-2 col-12 mx-auto">
+                        <button class="btn btn-info" type="button" id="searchbtn"
+                            (click)="performSearch()">Search</button>
+                    </div>
+                    <div class="d-grid mt-2 col-12 mx-auto">
+                        <button class="btn bg-warning text-dark" type="button" id="clearbtn"
+                            (click)="clearFields()">Clear</button>
+                    </div>
+                    <!-- </div> -->
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <hr>
+
+</div>
+<!-- table -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="table-responsive">
+
+                <table class="table table-striped ">
+                    <thead class="bg-light text-dark">
+                        <tr>
+                            <th>Req Id</th>
+                            <th>Username</th>
+                            <th>Phone</th>
+                            <th>Pick up time</th>
+                            <th>Pick up address</th>
+                            <th>Drop off address</th>
+                            <th>Service type</th>
+                            <th>Status</th>
+                            <th>Feedback</th>
+                            <th>Export</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ride of allRideList;">
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">{{
+                                ride.uniqueId}}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">
+                                {{ride.user.username}}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">{{
+                                ride.user.phone }}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">{{
+                                ride.scheduledDate | date: 'dd-MM-yyyy' }}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">
+                                {{ride.fromLocation}}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">
+                                {{ride.toLocation}}</td>
+                            <td data-bs-toggle="modal" data-bs-target="#infoModel" (click)="rideInfo(ride)">
+                                {{ride.service.name}}</td>
+
+
+                            <td [ngSwitch]="ride.ridestatus">
+
+                                <span class="btn btn-danger btn-sm" *ngSwitchCase="3"
+                                    [ngClass]="{'badge-success': ride.ridestatus === 3}">Canceled</span>
+                                <span class="btn btn-info btn-sm" *ngSwitchCase="7"
+                                    [ngClass]="{'badge-success': ride.ridestatus === 7}">Completed</span>
+
+                            </td>
+                            <td>
+                                <button class="btn bg-light text-dark border btn-sm" (click)="feedback(ride)"
+                                    data-bs-toggle="modal" data-bs-target="#feedbackModel">{{ride.feedback ? 'Feedback
+                                    Submitted' : 'Feedback' }}</button>
+                            </td>
+                            <td>
+                                <button class="btn bg-light text-dark border btn-sm"
+                                    (click)="download(ride)">Download</button>
+                            </td>
+
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="container-fluid">
+    <mat-paginator class="d-flex justify-content-center" hidePageSize="true" [length]="totalItems"
+        [pageSize]="itemsPerPage" (page)="onPageChange($event)">
+    </mat-paginator>
+</div>
+
+<!------------------------------ info model -------------------------->
+
+<div class="modal fade" id="infoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Ride Information</h2>
+            </div>
+
+            <div #mapContainer style="width: 100%; height: 100vh;"></div>
+
+            <div class="modal-body">
+                <ng-container *ngFor="let data of infoData">
+                    <div class=" d-flex justify-content-between">
+
+                        <div class="">
+                            <div>
+                                <b>Request Id :</b>
+                                <p>{{ data.uniqueId }}</p>
+                            </div>
+
+                            <div>
+                                <b>User Id :</b>
+                                <p>{{ data.user._id }}</p>
+                            </div>
+                            <div>
+                                <b>User Name :</b>
+                                <p>{{ data.user.username }}</p>
+                            </div>
+                            <div>
+                                <b>User Email :</b>
+                                <p>{{ data.user.email }}</p>
+                            </div>
+                            <div>
+                                <b>User Phone :</b>
+                                <p>{{ data.user.phone }}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">User Profile</b>
+                            <p><img [src]="getUserPic(data.user.profilePic)" style="max-width: 50px; max-height: 50px;">
+                            </p>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-between">
+
+
+                        <div class="">
+                            <div>
+                                <b>Start Location :</b>
+                                <p>{{ data.fromLocation }}</p>
+                            </div>
+
+                            <div>
+                                <b>End Location :</b>
+                                <p>{{ data.toLocation }}</p>
+                            </div>
+                            <div>
+                                <b>Stop Point :</b>
+                                <ng-container *ngFor="let stop of data.stopValue; let last = last">
+                                    {{ stop }}
+                                    <ng-container *ngIf="!last">
+                                        {{ ', ' }}
+                                    </ng-container>
+                                    <br>
+                                </ng-container>
+                            </div>
+                            <div>
+                                <b>Sevice Type :</b>
+                                <p>{{ data.service.name }}</p>
+                            </div>
+                            <div>
+                                <b>Total Distance:</b>
+                                <p>{{ data.totalDistanceKm }} Km</p>
+                            </div>
+                            <div>
+                                <b>Total Duration :</b>
+                                <p>{{ data.totalDurationMin | durationConvert}}</p>
+                            </div>
+                            <div>
+                                <b>EstimeteFare:</b>
+                                <p>₹ {{ data.estimeteFare | number: '1.2-2'}}</p>
+                            </div>
+                            <div>
+                                <b>Booking Time :</b>
+                                <p>{{ data.scheduledDate | date: 'medium'}}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="">
+                            <b class="me-2">Service Profile</b>
+                            <p><img [src]="getServiceIcon(data.service.icon)"
+                                    style="max-width: 50px; max-height: 50px;"></p>
+                        </div>
+                    </div>
+
+                </ng-container>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ------------------feedback model------------------>
+
+<div class="modal fade" id="feedbackModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center bg-info">
+                <h2>Give Feedback</h2>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="container-fluid mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating : </label>
+                                    <div class="rating">
+                                        <input type="radio" formControlName="rating" id="rating5" [value]=5><label
+                                            for="rating5">&#9733;</label>
+                                        <input type="radio" formControlName="rating" id="rating4" [value]=4><label
+                                            for="rating4">&#9733;</label>
+                                        <input type="radio" formControlName="rating" id="rating3" [value]=3><label
+                                            for="rating3">&#9733;</label>
+                                        <input type="radio" formControlName="rating" id="rating2" [value]=2><label
+                                            for="rating2">&#9733;</label>
+                                        <input type="radio" formControlName="rating" id="rating1" [value]=1><label
+                                            for="rating1">&#9733;</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="feedback" class="form-label">Feedback : </label>
+                                    <textarea class="form-control" id="feedback" rows="3" formControlName="feedback"
+                                        placeholder="Enter your feedback"></textarea>
+                                </div>
+                                <div class="text-end">
+                                    <button *ngIf="submitBtn" type="submit" class="btn btn-primary"
+                                        [disabled]="feedbackForm.invalid" data-bs-dismiss="modal">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

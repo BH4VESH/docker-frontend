@@ -1,0 +1,74 @@
+<div class="container ">
+  <div class="row  d-flex align-items-center justify-content-center">
+    <div class="navbar navbar-dark bg-secondary mt-5 d-flex align-items-center justify-content-center">
+      <h1>Setting</h1>
+    </div>
+    <div class="container">
+      <h2 class="display-5 mt-5">Set the seconds for the driver to accept the request.</h2>
+      <div class="input-group ps-5 pe-5">
+
+        <select class="form-select" id="inputGroupSelectSeconds" aria-label="Select seconds"
+          [(ngModel)]="selectedSeconds">
+          <option [value]="undefined" disabled selected>Select seconds</option>
+          <option *ngFor="let second of secondsOptions" [value]="second">{{ second }}</option>
+        </select>
+      </div>
+
+      <h2 class="display-5 mt-5">Set how many stops users can add between both locations.</h2>
+      <div class="input-group ps-5 pe-5">
+        <select class="form-select" id="inputGroupSelectStopCount" aria-label="Select stop count"
+          [(ngModel)]="selectedStopCount">
+          <option [value]="undefined" disabled selected>Select stop count</option>
+          <option *ngFor="let stop of stopOptions" [value]="stop">{{ stop }}</option>
+        </select>
+      </div>
+
+      <!-- add new field -->
+      <h2 class="display-5 mt-5">Email User:</h2>
+      <form [formGroup]="settingForm" (ngSubmit)="saveSetting()">
+
+        <div class="form-group  ps-5 pe-5">
+          <input type="email" formControlName="email_user" class="form-control">
+            <div *ngIf="settingForm.get('email_user')?.errors?.['email']">Invalid email format.</div>
+        </div>
+
+        <h2 class="display-5 mt-5">Email Password:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="password" formControlName="email_password" class="form-control">
+        </div>
+
+        <h2 class="display-5 mt-5">Twilio Account SID:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="text" formControlName="twilio_accountSid" class="form-control">
+        </div>
+
+        <h2 class="display-5 mt-5">Twilio Auth Token:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="text" formControlName="twilio_authToken" class="form-control">
+        </div>
+
+        <h2 class="display-5 mt-5">Twilio Phone Number:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="text" formControlName="twilio_PhoneNumber" class="form-control">
+        </div>
+
+        <h2 class="display-5 mt-5">Stripe Secret Key:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="text" formControlName="stripe_sk" class="form-control">
+        </div>
+
+        <h2 class="display-5 mt-5">Stripe Public Key:</h2>
+        <div class="form-group  ps-5 pe-5">
+          <input type="text" formControlName="stripe_pk" class="form-control">
+        </div>
+        <!-- <button type="submit" [disabled]="!settingForm.valid" class="btn btn-primary">Save Settings</button> -->
+
+
+
+        <div class="d-grid col-6 mx-auto m-5">
+          <button type="submit" class="btn btn-outline-info" >Save Setting</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,253 @@
+<div class="container">
+  <div class="row">
+    <div class="col d-flex align-items-center justify-content-center">
+      <form [formGroup]="vehicleForm" (submit)="sendDataToServer()">
+
+        <div class="container mt-5 text-center ">
+          <h1 class="display-4 bg-secondary ">Vehicle-pricing</h1>
+        </div>
+        <hr>
+        <div class="container">
+          <div class="row mt-3 d-flex">
+            <!-- First Part -->
+            <div class=" col col-md-6">
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCountry">Country</label>
+                <select class="form-select" id="inputGroupSelectCountry" (change)="onChangeCountry($event)"
+                  formControlName="selectedCountryId" >
+                  <ng-container *ngFor="let country of countries" >
+                    <option [value]="country._id"  [disabled]="isEditMode==true">{{ country.countryName }}</option>
+                  </ng-container>
+                </select>
+                <div *ngIf="vehicleForm.get('selectedCountryId')?.invalid && vehicleForm.get('selectedCountryId')?.touched">
+                 <span class="text-danger">Country is required</span> 
+                </div>
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">City</label>
+                <select class="form-select" id="inputGroupSelectCity" (change)="onChangeCity($event)"
+                  formControlName="selectedCityId">
+                  <!-- <option [value]="undefined"></option> -->
+                  <ng-container *ngFor="let city of city">
+                    <option [value]="city._id"  [disabled]="isEditMode==true">{{ city.name }}</option>
+                  </ng-container>
+                </select>
+      
+                <div *ngIf="vehicleForm.get('selectedCityId')?.invalid && vehicleForm.get('selectedCityId')?.touched">
+                  <span class="text-danger">City is required</span>
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectVehicle">Vehicles</label>
+                <select class="form-select" id="inputGroupSelectVehicle" (change)="onChangeVehicle($event)"
+                  formControlName="selectedVehicleId">
+                  <ng-container *ngFor="let vehicles of vehicles">
+                    <option [value]="vehicles._id"  [disabled]="isEditMode==true">{{ vehicles.name }}</option>
+                  </ng-container>
+                </select>
+                <div *ngIf="vehicleForm.get('selectedVehicleId')?.invalid && vehicleForm.get('selectedVehicleId')?.touched">
+                  <span class="text-danger">Vehicle is required</span>
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Driver Profit</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Driver_Profit">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('Driver_Profit')?.invalid && vehicleForm.get('Driver_Profit')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('Driver_Profit')?.errors?.['positiveNumber']">
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('Driver_Profit')?.errors?.['required']" >
+                    <span class="text-danger">Driver Profit is required</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">min fare</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)" formControlName="min_fare">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('min_fare')?.invalid && vehicleForm.get('min_fare')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('min_fare')?.errors?.['positiveNumber']">
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('min_fare')?.errors?.['required']">
+                    <span class="text-danger">min fare is required</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Second Part -->
+            <div class="col col-md-6">
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Distance for base price</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Distance_for_base_price">
+                <span class="input-group-text">?</span>
+      
+                <div
+                  *ngIf="vehicleForm.get('Distance_for_base_price')?.invalid && vehicleForm.get('Distance_for_base_price')?.touched">
+                  <div *ngIf="vehicleForm.get('Distance_for_base_price')?.errors?.['positiveNumber']">
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+      
+                  <div *ngIf="vehicleForm.get('Distance_for_base_price')?.errors?.['required']">
+                    <span class="text-danger">Distance for Base Price is required</span> 
+                  </div>
+                </div>
+      
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Base price</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Base_price">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('Base_price')?.invalid && vehicleForm.get('Base_price')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('Base_price')?.errors?.['positiveNumber']">
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('Base_price')?.errors?.['required']">
+                    <span class="text-danger">Base price is required</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Price per Unit Distance</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Price_per_Unit_Distance">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('Price_per_Unit_Distance')?.invalid && vehicleForm.get('Price_per_Unit_Distance')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('Price_per_Unit_Distance')?.errors?.['positiveNumber']">
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('Price_per_Unit_Distance')?.errors?.['required']" >
+                    <span class="text-danger">Price per Unit Distance is required</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Price per Unit time(min)</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Price_per_Unit_time">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('Price_per_Unit_time')?.invalid && vehicleForm.get('Price_per_Unit_time')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('Price_per_Unit_time')?.errors?.['positiveNumber']" >
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('Price_per_Unit_time')?.errors?.['required']">
+                    <span class="text-danger">Price per Unit time(min) is required</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelectCity">Max space</label>
+                <input type="tel" class="form-control" aria-label="Amount (to the nearest dollar)"
+                  formControlName="Max_space">
+                <span class="input-group-text">?</span>
+                <div *ngIf="vehicleForm.get('Max_space')?.invalid && vehicleForm.get('Max_space')?.touched">
+                  
+                  <div *ngIf="vehicleForm.get('Max_space')?.errors?.['positiveNumber']" >
+                    <span class="text-danger">Please enter a positive number</span>
+                  </div>
+                  <div *ngIf="vehicleForm.get('Max_space')?.errors?.['required']">
+                    <span class="text-danger">Max space is required</span>
+                    
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+      
+          <!-- <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-primary" [disabled]="!vehicleForm.valid">Submit</button>
+          </div> -->
+          <div  class="d-grid mt-3" *ngIf="!isEditMode">
+            <button type="submit" class="btn btn-primary" [disabled]="!vehicleForm.valid">Submit</button>
+          </div>
+          <!-- <div  class="col-6 mt-3" *ngIf="isEditMode">
+            <button type="button" class="btn btn-primary" (click)="onSubmit()">Update</button>
+            <button type="button" class="btn btn-primary" (click)="onCancel()">Update</button>
+          </div> -->
+          <div class="mx-auto container gap-2 d-flex align-items-center justify-content-center mt-3" *ngIf="isEditMode">
+            <div class="d-grid  col-6 mx-auto">
+              <button type="button" class="btn btn-primary" (click)="onUpdate();onCancel()">Update</button>
+            </div>
+            <div class="d-grid  col-6 mx-auto">
+              <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+            </div>
+        </div>
+        </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<!-- price Table -->
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table table-striped " >
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>City</th>
+              <th>Vehicle</th>
+              <th>Driver_Profit</th>
+              <th>min_fare</th>
+              <th>Distance_for_base_price</th>
+              <th>Base_price</th>
+              <th>Price_per_Unit_Distance</th>
+              <th>Price_per_Unit_time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let price of allPrice;">
+
+              <td>{{ price.country }}</td>
+              <td>{{ price.city }}</td>
+              <td>{{ price.vehicle }}</td>
+              <td>{{ price.Driver_Profit}}</td>
+              <td>{{ price.min_fare }}</td>
+              <td>{{ price.Distance_for_base_price }}</td>
+              <td>{{ price.Base_price }}</td>
+              <td>{{ price.Price_per_Unit_Distance }}</td>
+              <td>{{ price.Price_per_Unit_time }}</td>
+             
+              <td>
+                <button type="button"  class="btn btn-primary me-2"
+                  (click)=" onEdit(price)">Edit</button>
+                <!-- <button type="button" class="btn btn-danger me-2" (click)="deleteUser(user._id)">Delete</button> -->
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="container-fluid">
+  <mat-paginator class="d-flex justify-content-center" hidePageSize="true" [length]="totalItems" [pageSize]="itemsPerPage"
+  (page)="onPageChange($event)">
+</mat-paginator>
+</div>
+
