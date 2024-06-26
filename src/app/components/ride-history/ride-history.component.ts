@@ -209,12 +209,13 @@ export class RideHistoryComponent implements OnInit {
       //   }
       // );
 
-      const mapOptions: google.maps.MapOptions = {
-        center: { lat: 22.2598107, lng: 70.7287299 },
-        zoom: 10
-      };
-      this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
-
+      // const mapOptions: google.maps.MapOptions = {
+      //   center: { lat: 0, lng: 0 },
+      //   zoom: 10
+      // };
+      // this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
+      
+      
       this.geocoder = new google.maps.Geocoder();
       this.polyline = new google.maps.Polyline({
         map: this.map,
@@ -222,6 +223,7 @@ export class RideHistoryComponent implements OnInit {
         strokeOpacity: 1.0,
         strokeWeight: 4,
       });
+      this.map = new google.maps.Map(this.mapContainer.nativeElement, {zoom:10});
     });
   }
 

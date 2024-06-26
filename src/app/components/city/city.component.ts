@@ -85,10 +85,16 @@ export class CityComponent implements OnInit {
   // //////////////////////////////////////////////map load /////////////
   initMap(): void {
     const mapOptions: google.maps.MapOptions = {
-      center: { lat: 22.2598107, lng: 70.7287299 },
+      center: { lat: 0, lng: 0  },
       zoom: 10
     };
     this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
+
+    navigator.geolocation.getCurrentPosition((location) => {
+      let coordinates = location.coords;
+      const myplace = { lat: coordinates.latitude, lng: coordinates.longitude };
+      this.map.setCenter(myplace); 
+    });
 
     this.drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYGON,
