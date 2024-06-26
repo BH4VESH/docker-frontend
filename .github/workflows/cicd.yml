@@ -27,4 +27,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f angular-app-container  
       - name: Run docker container
-        run: docker run -d --init -p 4200:80 --name angular-app-container bhaveshnarola333/angular-app
+        run: docker run -d --init -p 6000:80 --name angular-app-container bhaveshnarola333/angular-app
